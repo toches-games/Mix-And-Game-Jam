@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     #region inspector variables
 
-    [SerializeField, Range(0.1f, 2f)] private float initialSpeed = 1f;
+    [SerializeField, Range(1f, 5f)] private float initialSpeed = 3f;
     [SerializeField, Range(5f, 20f)] private float maxSpeed = 10f;
     [SerializeField, Range(5f, 10f)] private float acceleration = 5f;
 
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed += acceleration * Time.deltaTime * Time.deltaTime;
         currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
-        rig.velocity = MovementDirection().normalized * currentSpeed;
+        rig.velocity = MovementDirection() * currentSpeed;
     }
 
     private Vector2 MovementDirection()
