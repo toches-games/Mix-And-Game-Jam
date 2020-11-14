@@ -6,7 +6,13 @@ public class FollowEnemy : MonoBehaviour
 {
     [SerializeField, Range(1f, 5f)] private float speed = 3f;
 
-    Rigidbody2D rig;
+    private Rigidbody2D rig;
+    private float[] xRandomSize = { -0.4f, 0.4f };
+    private float xSize;
+    private float xSpeed;
+
+    //for smoothdamp
+    private float currentVelocity;
 
     private void Awake()
     {
@@ -16,6 +22,8 @@ public class FollowEnemy : MonoBehaviour
     private void Start()
     {
         rig.velocity = Vector2.up * speed;
+        xSize = xRandomSize[Random.Range(0, xRandomSize.Length)];
+        transform.localScale = new Vector2(xSize, 0.4f);
     }
 
     private void FixedUpdate()
@@ -24,5 +32,21 @@ public class FollowEnemy : MonoBehaviour
         {
             rig.velocity = new Vector2(rig.velocity.x, speed);
         }
+        
+        Vector2 playerDistance = Player.Instance.transform.position - transform.position;
+
+        if(playerDistance.y < -1f)
+        {
+            rig.velocity = new Vector2(speed * 2f * playerDistance.normalized.x, rig.velocity.y);
+            xSpeed = rig.velocity.x;
+        }
+
+        else
+        {
+            xSpeed = Mathf.SmoothDamp(xSpeed, 0f, ref currentVelocity, 0.2f);
+            rig.velocity = new Vector2(xSpeed, rig.velocity.y);
+        }
+        
+        rig.rotation = 10f / playerDistance.x * xSpeed * -playerDistance.normalized.x;
     }
 }
