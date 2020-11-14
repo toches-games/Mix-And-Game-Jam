@@ -480,7 +480,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1026537072}
   m_Layer: 0
-  m_Name: MapStartPosition
+  m_Name: MapStartPoint
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -499,6 +499,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1935015787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1935015788}
+  m_Layer: 0
+  m_Name: ObjectsPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1935015788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935015787}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2116882987
 GameObject:
@@ -560,12 +590,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allTheMapBlocks:
-  - {fileID: 5045597424774946829, guid: 23889a3d8be56954ca09c53cd44df2b4, type: 3}
-  - {fileID: -884012031464836401, guid: 28837296050724c41adedacf43545509, type: 3}
-  - {fileID: 1821693708808429719, guid: 4751a45ca0f720c4cb3ba2389630f4f2, type: 3}
-  - {fileID: 4855226115666224985, guid: 05e76145eb58dff4c93ad73140513c22, type: 3}
-  currentMapBlocks: []
-  MapStartPosition: {fileID: 1026537072}
+  - {fileID: 2781392847541263105, guid: 4751a45ca0f720c4cb3ba2389630f4f2, type: 3}
+  - {fileID: 8993242325569781619, guid: 28837296050724c41adedacf43545509, type: 3}
+  - {fileID: 6731289972565035587, guid: 23889a3d8be56954ca09c53cd44df2b4, type: 3}
+  initMapBlock: {fileID: 1549746470237594088, guid: 05e76145eb58dff4c93ad73140513c22,
+    type: 3}
+  pooledObjects: []
+  mapStartPoint: {fileID: 1026537072}
 --- !u!114 &2116882991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,6 +609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1755f602d9154fa41b4e4f3833405f93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pooledObjects: []
-  objectToPool: {fileID: 0}
-  amountToPool: 0
+  straightRoadPool: []
+  rightRoadPool: []
+  leftRoadPool: []
+  amountToPool: 4

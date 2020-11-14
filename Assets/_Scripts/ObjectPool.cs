@@ -4,9 +4,20 @@ using System.Collections.Generic;
 public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool sharedInstance;
-    public List<GameObject> pooledObjects;
-    //public GameObject objectToPool;
-    public int amountToPool;
+    [SerializeField]
+    private List<GameObject> straightRoadPool;
+    [SerializeField]
+    private List<GameObject> rightRoadPool;
+    [SerializeField]
+    private List<GameObject> leftRoadPool;
+    //[SerializeField]
+    //private GameObject straightRoadToPool;
+    //[SerializeField]
+    //private GameObject rightRoadToPool;
+    //[SerializeField]
+    //private GameObject leftRoadToPool;
+    [SerializeField]
+    private int amountToPool;
 
     void Awake()
     {
@@ -15,31 +26,81 @@ public class ObjectPool : MonoBehaviour
 
     void Start()
     {
-        /**
-        pooledObjects = new List<GameObject>();
-        GameObject tmp;
-        for (int i = 0; i < amountToPool; i++)
-        {
-            tmp = Instantiate(objectToPool);
-            tmp.SetActive(false);
-            pooledObjects.Add(tmp);
-        }
-        **/
+        straightRoadPool = new List<GameObject>();
+        rightRoadPool = new List<GameObject>();
+        leftRoadPool = new List<GameObject>();
 
+        GameObject tmp;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < amountToPool; j++)
+            {
+                tmp = Instantiate(GenerationSystem.sharedInstance.allTheMapBlocks[i]);
+                tmp.transform.SetParent(GameObject.Find("ObjectsPool").transform);
+                tmp.SetActive(false);
+
+                switch (i)
+                {
+                    case 0:
+                        straightRoadPool.Add(tmp);
+                        break;
+                    case 1:
+                        rightRoadPool.Add(tmp);
+                        break;
+                    case 2:
+                        leftRoadPool.Add(tmp);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
     }
 
-    public GameObject GetPooledObject()
+
+    /// <summary>
+    /// Devuelve un objeto de la pool
+    /// </summary>
+    /// <param name="type"> 
+    /// tipo de objeto: 
+    /// 0: Recta
+    /// 1: Curva derecha
+    /// 2: Curva izquierda
+    /// </param>
+    /// <returns></returns>
+    public GameObject GetPooledObject(int type)
     {
         for (int i = 0; i < amountToPool; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            switch (type)
             {
-                return pooledObjects[i];
+                case 0:
+                    if (!straightRoadPool[i].activeInHierarchy)
+                    {
+                        return straightRoadPool[i];
+                    }
+                    break;
+                case 1:
+                    if (!rightRoadPool[i].activeInHierarchy)
+                    {
+                        return rightRoadPool[i];
+                    }
+                    break;
+                case 2:
+                    if (!leftRoadPool[i].activeInHierarchy)
+                    {
+                        return leftRoadPool[i];
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         return null;
     }
+
+
     /** Codigo para script donde se vaya a instanciar el objeto
     
     GameObject bullet = ObjectPool.sharedInstance.GetPooledObject(); 
