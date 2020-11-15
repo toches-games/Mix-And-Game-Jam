@@ -11,6 +11,9 @@ public class MapBlock : MonoBehaviour
         if (collision.CompareTag("DisableZone"))
         {
             this.gameObject.SetActive(false);
+
+            GenerationSystem.sharedInstance.currentBlocks.Remove(this.gameObject);
+
         }else if (collision.CompareTag("ActivateZone"))
         {
             GenerationSystem.sharedInstance.GenerateBlock();

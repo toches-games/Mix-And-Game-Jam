@@ -7,6 +7,10 @@ public class GenerationSystem : MonoBehaviour
     public static GenerationSystem sharedInstance;
 
     public List<GameObject> allTheMapBlocks = new List<GameObject>();
+    public List<GameObject> currentBlocks = new List<GameObject>();
+
+    public List<GameObject> enemyPositions = new List<GameObject>();
+
     [SerializeField, Tooltip("Prefab del mapa inicial")]
     private GameObject initMapBlock;
     [SerializeField]
@@ -36,24 +40,38 @@ public class GenerationSystem : MonoBehaviour
     {
         GameObject block;
         Vector3 spawnPosition = Vector3.zero;
+        Vector3 spawnLocalPosition = Vector3.zero;
 
         if (blocksAmount == 0)
         {
             block = Instantiate(initMapBlock);
+            
             spawnPosition = mapStartPoint.position;
+            //Debug.Log("Spawn global: " + spawnPosition);
+
         }
         else
         {
             //block = ObjectPool.sharedInstance.GetPooledObject(Random.Range(0,3));
             block = ObjectPool.sharedInstance.GetPooledObject(0);
-
+            
             if (block != null)
             {
-                
-                spawnPosition = FindObjectsOfType<MapBlock>()[FindObjectsOfType<MapBlock>().Length-1].
-                    endPoint.localPosition;
 
-                //Debug.Log(spawnPosition);
+                //MapBlock tmp = FindObjectsOfType<MapBlock>()[FindObjectsOfType<MapBlock>().Length - 1];
+                MapBlock tmp = currentBlocks[currentBlocks.Count-1].GetComponent<MapBlock>();
+
+                spawnPosition = tmp.endPoint.position;
+                spawnLocalPosition = tmp.endPoint.transform.localPosition;
+
+                //Debug.Log("Spawn global: " + spawnPosition);
+
+                //foreach (var item in FindObjectsOfType<MapBlock>())
+                //{
+                //    Debug.Log(item.endPoint.position);
+
+                //}
+                //Debug.Log("Spawn local: " + spawnLocalPosition);
                 //Debug.Log(FindObjectsOfType<MapBlock>()[FindObjectsOfType<MapBlock>().Length - 1].
                 //    endPoint.localPosition);
 
@@ -87,10 +105,10 @@ public class GenerationSystem : MonoBehaviour
         //Debug.Log("correccion " + correction);
 
         block.transform.SetParent(this.transform, false);
-        //block.transform.position = new Vector3(0,14+spawnPosition.y);
-        block.transform.position = new Vector3(correction.x, correction.y,0);
-         
-        //block.transform.position = correction;
+        block.transform.position = correction;
+
+        currentBlocks.Add(block);
+
         blocksAmount++;
         block.SetActive(true);
     }

@@ -15,12 +15,12 @@ public class PlayerStats : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameManager.sharedInstance.currentState != GameState.inGame)
+        if(GameManager.sharedInstance.CurrentState != GameState.inGame)
         {
             return;
         }
 
-        score += Time.deltaTime * 1.5f;
+        UIManager.SI.RefreshScore(score += Time.deltaTime * PlayerController.sharedInstance.GetCurrentSpeed() * 0.3f);
     }
 
     public float GetScore()

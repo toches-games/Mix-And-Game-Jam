@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - Math
+  - ActivateZone
+  - DisableZone
   layers:
   - Default
   - TransparentFX
@@ -48,4 +50,10 @@ TagManager:
     locked: 0
   - name: Road
     uniqueID: 1754688379
+    locked: 0
+  - name: Obstacle
+    uniqueID: 408779207
+    locked: 0
+  - name: Player
+    uniqueID: 2455496975
     locked: 0

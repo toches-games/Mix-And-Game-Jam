@@ -4,6 +4,9 @@
 [RequireComponent(typeof(CapsuleCollider2D))]
 public class PlayerController : MonoBehaviour
 {
+
+    public static PlayerController sharedInstance;
+
     #region inspector variables
 
     // Velocidad inicial que tendrá el jugador
@@ -11,7 +14,7 @@ public class PlayerController : MonoBehaviour
     // Velocidad maxima que podrá alcanzar
     [SerializeField, Range(5f, 20f)] private float maxSpeed = 10f;
     // Aceleracion del jugador, para alcanzar la velocidad maxima
-    [SerializeField, Range(0.1f, 1f)] private float acceleration = 0.5f;
+    [SerializeField, Range(0.1f, 1f)] private float acceleration = 2f;
 
     #endregion
 
@@ -33,8 +36,11 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    public int Lives { get; set; } = 3;
+
     private void Awake()
     {
+        sharedInstance = sharedInstance == null ? this : sharedInstance;
         rig = GetComponent<Rigidbody2D>();
     }
 
@@ -112,7 +118,20 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 direction = (collision.transform.position - transform.position).normalized;
             rig.velocity = direction * -currentSpeed;
+
+            if (Lives >= 0)
+            {
+                Lives--;
+                UIManager.SI.LoseLife();
+            }
+
+            //TODO animacion de perder vida
             hit = true;
         }
+    }
+
+    public float GetCurrentSpeed()
+    {
+        return currentSpeed;
     }
 }

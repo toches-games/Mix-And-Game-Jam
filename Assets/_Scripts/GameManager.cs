@@ -13,15 +13,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager sharedInstance;
 
-    public GameState currentState { get; set; } = GameState.inMenu;
+    public GameState CurrentState { get; set; } = GameState.inGame;
 
     [SerializeField]
     private int mapVelocity;
 
+    private void Awake()
+    {
+        sharedInstance = sharedInstance == null ? this : sharedInstance;
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        CurrentState = GameState.inGame;
     }
 
     // Update is called once per frame
@@ -32,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState newState)
     {
-        currentState = newState;
+        CurrentState = newState;
 
         if(newState == GameState.inMenu)
         {
@@ -48,10 +54,10 @@ public class GameManager : MonoBehaviour
 
     private void MoveMapDown()
     {
-        GenerationSystem.sharedInstance.gameObject.transform.localPosition = new Vector3(
-            GenerationSystem.sharedInstance.gameObject.transform.localPosition.x,
-            GenerationSystem.sharedInstance.gameObject.transform.localPosition.y - Time.deltaTime * mapVelocity,
-            GenerationSystem.sharedInstance.gameObject.transform.localPosition.z);
+        GenerationSystem.sharedInstance.gameObject.transform.position = new Vector3(
+            GenerationSystem.sharedInstance.gameObject.transform.position.x,
+            GenerationSystem.sharedInstance.gameObject.transform.position.y - Time.deltaTime * mapVelocity,
+            GenerationSystem.sharedInstance.gameObject.transform.position.z);
     }
 
 

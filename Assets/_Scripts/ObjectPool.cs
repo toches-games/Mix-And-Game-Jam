@@ -4,18 +4,17 @@ using System.Collections.Generic;
 public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool sharedInstance;
-    [SerializeField]
     private List<GameObject> straightRoadPool;
-    [SerializeField]
     private List<GameObject> rightRoadPool;
-    [SerializeField]
     private List<GameObject> leftRoadPool;
-    //[SerializeField]
-    //private GameObject straightRoadToPool;
-    //[SerializeField]
-    //private GameObject rightRoadToPool;
-    //[SerializeField]
-    //private GameObject leftRoadToPool;
+
+    [SerializeField]
+    private List<GameObject> allEnemies;
+
+    private List<GameObject> straightEnemy;
+    private List<GameObject> followEnemy;
+    private List<GameObject> zigzagEnemy;
+
     [SerializeField]
     private int amountToPool;
 
@@ -30,12 +29,23 @@ public class ObjectPool : MonoBehaviour
         rightRoadPool = new List<GameObject>();
         leftRoadPool = new List<GameObject>();
 
+        straightEnemy = new List<GameObject>();
+        zigzagEnemy = new List<GameObject>();
+        followEnemy = new List<GameObject>();
+
         GameObject tmp;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < amountToPool; j++)
             {
-                tmp = Instantiate(GenerationSystem.sharedInstance.allTheMapBlocks[i]);
+                if (i < 3)
+                {
+                    tmp = Instantiate(GenerationSystem.sharedInstance.allTheMapBlocks[i]);
+                }
+                else
+                {
+                    tmp = Instantiate(allEnemies[i-3]);
+                }
                 tmp.transform.SetParent(GameObject.Find("ObjectsPool").transform);
                 tmp.SetActive(false);
 
@@ -49,6 +59,15 @@ public class ObjectPool : MonoBehaviour
                         break;
                     case 2:
                         leftRoadPool.Add(tmp);
+                        break;
+                    case 3:
+                        straightEnemy.Add(tmp);
+                        break;
+                    case 4:
+                        zigzagEnemy.Add(tmp);
+                        break;
+                    case 5:
+                        followEnemy.Add(tmp);
                         break;
                     default:
                         break;
@@ -91,6 +110,24 @@ public class ObjectPool : MonoBehaviour
                     if (!leftRoadPool[i].activeInHierarchy)
                     {
                         return leftRoadPool[i];
+                    }
+                    break;
+                case 3:
+                    if (!straightEnemy[i].activeInHierarchy)
+                    {
+                        return straightEnemy[i];
+                    }
+                    break;
+                case 4:
+                    if (!zigzagEnemy[i].activeInHierarchy)
+                    {
+                        return zigzagEnemy[i];
+                    }
+                    break;
+                case 5:
+                    if (!followEnemy[i].activeInHierarchy)
+                    {
+                        return followEnemy[i];
                     }
                     break;
                 default:
