@@ -12,7 +12,7 @@ public class GenerationSystem : MonoBehaviour
     [SerializeField]
     private List<GameObject> pooledObjects;
     
-    private int blocksAmount = 0;
+    public static int blocksAmount = 0;
 
     [SerializeField]
     private Transform mapStartPoint;
@@ -28,10 +28,12 @@ public class GenerationSystem : MonoBehaviour
         GenerateInitialBlocks();
     }
 
+    private void Update()
+    {
+    }
+
     public void GenerateBlock()
     {
-        //int randomIdx = Random.Range(0, allTheMapBlocks.Count);
-
         GameObject block;
         Vector3 spawnPosition = Vector3.zero;
 
@@ -42,11 +44,19 @@ public class GenerationSystem : MonoBehaviour
         }
         else
         {
+            //block = ObjectPool.sharedInstance.GetPooledObject(Random.Range(0,3));
             block = ObjectPool.sharedInstance.GetPooledObject(0);
+
             if (block != null)
             {
-                spawnPosition = GameObject.Find("Top point").transform.position;
                 
+                spawnPosition = FindObjectsOfType<MapBlock>()[FindObjectsOfType<MapBlock>().Length-1].
+                    endPoint.localPosition;
+
+                //Debug.Log(spawnPosition);
+                //Debug.Log(FindObjectsOfType<MapBlock>()[FindObjectsOfType<MapBlock>().Length - 1].
+                //    endPoint.localPosition);
+
             }
         }
 
@@ -67,11 +77,20 @@ public class GenerationSystem : MonoBehaviour
         concuerde exacto con el pto final del block anterior.
         **/
         Vector3 correction = new Vector3(
-            spawnPosition.x - block.GetComponent<MapBlock>().startPoint.position.x,
-            spawnPosition.y - block.GetComponent<MapBlock>().startPoint.position.y,
+            spawnPosition.x - block.GetComponent<MapBlock>().startPoint.localPosition.x,
+            spawnPosition.y - block.GetComponent<MapBlock>().startPoint.localPosition.y,
             0);
-        block.transform.position = correction;
+        //Debug.Log(spawnPosition.x);
+        //Debug.Log(block.GetComponent<MapBlock>().startPoint.position.x);
+        //Debug.Log(spawnPosition.y);
+        //Debug.Log(block.GetComponent<MapBlock>().startPoint.position.y);
+        //Debug.Log("correccion " + correction);
+
         block.transform.SetParent(this.transform, false);
+        //block.transform.position = new Vector3(0,14+spawnPosition.y);
+        block.transform.position = new Vector3(correction.x, correction.y,0);
+         
+        //block.transform.position = correction;
         blocksAmount++;
         block.SetActive(true);
     }

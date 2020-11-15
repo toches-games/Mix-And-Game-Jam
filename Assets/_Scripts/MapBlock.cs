@@ -6,15 +6,14 @@ public class MapBlock : MonoBehaviour
 {
     public Transform startPoint, endPoint;
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        if (collision.CompareTag("DisableZone"))
+        {
+            this.gameObject.SetActive(false);
+        }else if (collision.CompareTag("ActivateZone"))
+        {
+            GenerationSystem.sharedInstance.GenerateBlock();
+        }
     }
 }
