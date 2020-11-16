@@ -88,9 +88,11 @@ public class PlayerMath : MonoBehaviour
             // (retorna un objeto de la clase Operation)
             // Los puntos solo se obtienen de la operación correcta
             Operation o = MathSystem.Instance.GetCurrentOperation();
-            print("--- Operación correcta ---");
-            print(o.Num1 + " --- " + o.Symbol + " --- " + o.Num2 + " --- " + o.Result + " --- " + o.Points);
+            Debug.LogWarning("--- Operación correcta ---");
+            Debug.LogWarning(o.Num1 + " --- " + o.Symbol + " --- " + o.Num2 + " --- " + o.Result + " --- " + o.Points);
         }
+
+        MathSystem.Instance.InstantiateNumbers();
 
         print("--- Operación del jugador ---");
         print(currentOperation.Num1 + " --- " +
