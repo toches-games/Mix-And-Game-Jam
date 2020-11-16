@@ -9,12 +9,12 @@ public class MathSystem : MonoBehaviour
     // Operación del jugador con resultado correcto
     private Operation targetOperation;
     // Prefabs de los numeros del 0 al 9
-    [SerializeField] private SpriteRenderer[] numberPrefabs;
+    [SerializeField] private Sprite[] numberPrefabs;
     // Objects de los numeros de las operaciones
     [SerializeField] private Transform numbers;
     // Objects de los signos de las operaciones
     [SerializeField] private Transform symbols;
-    [SerializeField, Range(1, 5)] private int numbersCount = 3;
+    [SerializeField, Range(1, 100)] private int maxNumber = 100;
 
     // Singleton
     private void Awake()
@@ -32,7 +32,6 @@ public class MathSystem : MonoBehaviour
 
     private void Start()
     {
-        CreateNumberImages();
         InstantiateNumbers();
         StartCoroutine(CheckNumbers());
     }
@@ -49,6 +48,43 @@ public class MathSystem : MonoBehaviour
 
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    // Crea la imagen del numero que salió
+    private void CreateNumberImage(Transform number)
+    {
+        char[] numberChar = number.name.ToCharArray();
+
+        if(numberChar[0] == '-')
+        {
+            number.GetChild(0).gameObject.SetActive(true);
+            
+            for (int i = 1; i < numberChar.Length; i++)
+            {
+                number.GetChild(i).GetComponent<SpriteRenderer>().sprite = numberPrefabs[(int)char.GetNumericValue(numberChar[i])];
+                number.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+
+        else
+        {
+            number.GetChild(0).gameObject.SetActive(false);
+
+            for (int i = 0; i < numberChar.Length; i++)
+            {
+                number.GetChild(i+1).GetComponent<SpriteRenderer>().sprite = numberPrefabs[(int)char.GetNumericValue(numberChar[i])];
+                number.GetChild(i+1).gameObject.SetActive(true);
+            }
+        }
+
+        for(int i=numberChar.Length; i<number.childCount-1; i++)
+        {
+            number.GetChild(i+1).gameObject.SetActive(false);
+        }
+
+        BoxCollider2D bc = number.GetComponent<BoxCollider2D>();
+        bc.offset = new Vector2(number.name.Length * 1.3f / 2f, 0f);
+        bc.size = new Vector2(number.name.Length * 4f / 2f, 3f);
     }
 
     // Oculta los numeros que hay en pantalla, para que no pueda agarrar varios a la vez
@@ -68,18 +104,18 @@ public class MathSystem : MonoBehaviour
         DestroyNumbers();
 
         int xPosition = -1;
+        int xCorrectPosition = Random.Range(-1, 2);
+        Operation playerOperation = Player.Instance.PlayerMath.GetCurrentOperation();
 
-        for (int i = 0; i < numbersCount; i++)
+        // Cuando elige un signo, solo se generan signos
+        if (playerOperation != null && playerOperation.State == OperationState.Symbol)
         {
-            Vector2 targetPosition = new Vector2(xPosition++ * 5f, Player.Instance.transform.position.y + 30f);
-            Operation playerOperation = Player.Instance.PlayerMath.GetCurrentOperation();
-
-            // Cuando elige un signo, solo se generan signos
-            if (playerOperation != null && playerOperation.State == "Symbol")
+            for (int i = 0; i < symbols.childCount; i++)
             {
                 int randomSymbol = Random.Range(0, symbols.childCount);
+                Vector2 targetPosition = new Vector2(xPosition++ * 5f, Player.Instance.transform.position.y + 30f);
 
-                while (symbols.GetChild(randomSymbol).gameObject.activeSelf && symbols.GetChild(randomSymbol).position.y > Player.Instance.transform.position.y - 5f)
+                while (symbols.GetChild(randomSymbol).gameObject.activeSelf)
                 {
                     randomSymbol = Random.Range(0, symbols.childCount);
                 }
@@ -87,90 +123,46 @@ public class MathSystem : MonoBehaviour
                 symbols.GetChild(randomSymbol).position = targetPosition;
                 symbols.GetChild(randomSymbol).gameObject.SetActive(true);
             }
+        }
 
-            // Cuando elige numeros, solo elige numeros del 0 al 10
-            else if (playerOperation == null || playerOperation.State != "Result")
+        // Cuando elige numeros, solo elige numeros del 0 al numero maximo
+        else if (playerOperation == null || playerOperation.State != OperationState.Result)
+        {
+            for(int i = 0; i < numbers.childCount; i++)
             {
-                int randomNumber = Random.Range(0, 11);
+                int randomNumber = Random.Range(0, maxNumber);
+                Vector2 targetPosition = new Vector2(xPosition++ * 5f, Player.Instance.transform.position.y + 30f);
 
-                while (numbers.GetChild(randomNumber).gameObject.activeSelf && numbers.GetChild(randomNumber).position.y > Player.Instance.transform.position.y - 5f)
-                {
-                    randomNumber = Random.Range(0, 11);
-                }
+                numbers.GetChild(i).position = targetPosition;
+                numbers.GetChild(i).gameObject.SetActive(true);
+                numbers.GetChild(i).name = randomNumber + "";
 
-                numbers.GetChild(randomNumber).position = targetPosition;
-                numbers.GetChild(randomNumber).gameObject.SetActive(true);
-            }
-
-            // Genera todos los numeros al momento de elegir resultado
-            else
-            {
-                int randomNumber = Random.Range(0, numbers.childCount);
-
-                while (numbers.GetChild(randomNumber).gameObject.activeSelf && numbers.GetChild(randomNumber).position.y > Player.Instance.transform.position.y - 5f)
-                {
-                    randomNumber = Random.Range(0, numbers.childCount);
-                }
-
-                numbers.GetChild(randomNumber).position = targetPosition;
-                numbers.GetChild(randomNumber).gameObject.SetActive(true);
+                CreateNumberImage(numbers.GetChild(i));
             }
         }
-    }
 
-    // Crea los numeros que saldrán como imagenes
-    private void CreateNumberImages()
-    {
-        for (int i = 0; i <= 100; i++)
+        // Genera todos los numeros al momento de elegir resultado
+        else
         {
-            GameObject go = new GameObject(i + "");
-            go.tag = "Math";
-            go.transform.SetParent(numbers);
-            go.transform.localScale = Vector2.one * 0.4f;
-            go.SetActive(false);
-
-            if (i < 10)
+            for(int i = 0; i < numbers.childCount; i++)
             {
-                SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = numberPrefabs[i].sprite;
+                // Falta arreglar que se generen solo numeros cercanos al resultado
+                //int randomNumber = targetOperation.Result + i - 1;
 
-                BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-                bc.isTrigger = true;
-            }
+                int randomNumber = Random.Range(0, maxNumber * maxNumber);
+                Vector2 targetPosition = new Vector2(xPosition++ * 5f, Player.Instance.transform.position.y + 30f);
 
-            else
-            {
-                BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
-                bc.isTrigger = true;
-
-                char[] numString = i.ToString().ToCharArray();
-
-                for(int j=0; j < numString.Length; j++)
+                if (xPosition - 1 == xCorrectPosition)
                 {
-                    int digitValue = (int)char.GetNumericValue(numString[j]);
-                    GameObject go1 = new GameObject(digitValue + "");
-                    SpriteRenderer sr1 = go1.AddComponent<SpriteRenderer>();
-                    sr1.sprite = numberPrefabs[digitValue].sprite;
-                    go1.transform.SetParent(go.transform);
-                    go1.transform.localScale = Vector2.one;
-
-                    if (i < 100)
-                    {
-                        if(j == 0) go1.transform.localPosition = new Vector2(-1.5f, 0f);
-                        else go1.transform.localPosition = new Vector2(1.5f, 0f);
-
-                        bc.size = new Vector2(5.5f, 4.5f);
-                    }
-
-                    else if(i == 100)
-                    {
-                        if(j == 0) go1.transform.localPosition = new Vector2(-3f, 0f);
-                        else if(j == 1) go1.transform.localPosition = new Vector2(0f, 0f);
-                        else go1.transform.localPosition = new Vector2(3f, 0f);
-
-                        bc.size = new Vector2(8.5f, 4.5f);
-                    }
+                    randomNumber = targetOperation.Result;
+                    targetPosition.x = xCorrectPosition * 5f;
                 }
+
+                numbers.GetChild(i).position = targetPosition;
+                numbers.GetChild(i).gameObject.SetActive(true);
+                numbers.GetChild(i).name = randomNumber + "";
+
+                CreateNumberImage(numbers.GetChild(i));
             }
         }
     }
@@ -194,6 +186,15 @@ public class MathSystem : MonoBehaviour
     }
 }
 
+// Los estados que podrá tener una operación
+public enum OperationState
+{
+    Num1,
+    Num2,
+    Symbol,
+    Result
+}
+
 public class Operation
 {
     public int Num1 { set; get; }
@@ -201,11 +202,11 @@ public class Operation
     public string Symbol { set; get; }
     public int Result { set; get; }
     public int Points { set; get; }
-    public string State { set; get; }
+    public OperationState State { set; get; }
 
     public Operation()
     {
-        State = "Num1";
+        State = OperationState.Num1;
     }
 
     // Crea una operación apartir de otra, se usa solo para crear la operación

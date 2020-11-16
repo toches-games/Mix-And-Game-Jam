@@ -12,21 +12,21 @@ public class PlayerMath : MonoBehaviour
         // y se borra la actual
         currentOperation = new Operation();
         currentOperation.Num1 = num1;
-        currentOperation.State = "Symbol";
+        currentOperation.State = OperationState.Symbol;
     }
 
     // Asigna el signo de la operación del jugador
     public void SetOperationSymbol(string symbol)
     {
         currentOperation.Symbol = symbol;
-        currentOperation.State = "Num2";
+        currentOperation.State = OperationState.Num2;
     }
 
     // Asigna el segundo numero de la operación del jugador
     public void SetOperationNum2(int num2)
     {
         currentOperation.Num2 = num2;
-        currentOperation.State = "Result";
+        currentOperation.State = OperationState.Result;
 
         // Cuando el jugador agarra el segundo numero de la operación se crea
         // la solución en el MathSystem para comprobar el resultado
@@ -37,7 +37,7 @@ public class PlayerMath : MonoBehaviour
     public void SetOperationResult(int result)
     {
         currentOperation.Result = result;
-        currentOperation.State = "Num1";
+        currentOperation.State = OperationState.Num1;
     }
 
     // Asigna los puntos que dará la operación por ser resuelta
@@ -57,26 +57,26 @@ public class PlayerMath : MonoBehaviour
         if (!collision.CompareTag("Math")) return;
 
         // Si la operación no tiene el primer numero se le asigna cuando choca con tag "Math"
-        if (currentOperation == null || currentOperation.State == "Num1")
+        if (currentOperation == null || currentOperation.State == OperationState.Num1)
         {
             SetOperationNum1(int.Parse(collision.name));
         }
 
         // Si la operación no tiene un simbolo y lo que choca no es un numero
-        else if(currentOperation.State == "Symbol" && !char.IsDigit(collision.name[0]))
+        else if(currentOperation.State == OperationState.Symbol && !char.IsDigit(collision.name[0]))
         {
             SetOperationSymbol(collision.name);
         }
 
         // Si el estado de la operación es agregar el segundo numero entonces lo agrega
         // cuando choca con algo que tiene el tag "Math"
-        else if(currentOperation.State == "Num2")
+        else if(currentOperation.State == OperationState.Num2)
         {
             SetOperationNum2(int.Parse(collision.name));
         }
 
         // Si es momento de agregar el resultado cuando choca, lo agrega a la operación
-        else if(currentOperation.State == "Result")
+        else if(currentOperation.State == OperationState.Result)
         {
             SetOperationResult(int.Parse(collision.name));
 

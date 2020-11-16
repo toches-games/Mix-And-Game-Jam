@@ -8,6 +8,7 @@ TagManager:
   - Math
   - ActivateZone
   - DisableZone
+  - Digit
   layers:
   - Default
   - TransparentFX
