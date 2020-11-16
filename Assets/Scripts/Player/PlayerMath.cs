@@ -5,6 +5,9 @@ public class PlayerMath : MonoBehaviour
     // Guarda la operación que está creando el jugador
     private Operation currentOperation;
 
+    // Efecto de particulas
+    [SerializeField] private ParticleSystem particles;
+
     // Asigna el primer numero de la operación del jugador
     public void SetOperationNum1(int num1)
     {
@@ -55,6 +58,8 @@ public class PlayerMath : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision.CompareTag("Math")) return;
+
+        particles.Play();
 
         // Si la operación no tiene el primer numero se le asigna cuando choca con tag "Math"
         if (currentOperation == null || currentOperation.State == OperationState.Num1)
